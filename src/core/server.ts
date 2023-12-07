@@ -13,14 +13,17 @@ class Server {
 
   constructor(options: ServerOptions) {
     this.port = options.port;
+    this.router = options.router;
     this.app = express();
     this.app.use(express.json());
     this.app.use(cors());
-    this.router = options.router;
+    this.app.use(this.router);
   }
   async start() {
     try {
-      this.app.listen(this.port, () => console.log("server started: ", this.port));
+      this.app.listen(this.port, () =>
+        console.log("server started: ", this.port)
+      );
     } catch (error) {
       throw error;
     }
