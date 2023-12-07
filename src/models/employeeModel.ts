@@ -1,6 +1,18 @@
 import { Schema, model } from "mongoose";
 
-interface IEmployee {}
+export interface IEmployee {
+  firstName: string;
+  lastName: string;
+  age: number;
+  gender: string;
+  email: string;
+  address: string;
+  phone: string;
+  position: string;
+  salary: number;
+  startDate: string;
+  id: string;
+}
 
 const employeeSchema = new Schema<IEmployee>(
   {
