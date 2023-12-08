@@ -12,26 +12,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-class Server {
-    constructor(options) {
-        this.port = options.port;
-        this.router = options.router;
-        this.app = (0, express_1.default)();
-        this.app.use(express_1.default.json());
-        this.app.use((0, cors_1.default)());
-        this.app.use(this.router);
-    }
-    start() {
+const mongoose_1 = __importDefault(require("mongoose"));
+const utils_1 = require("../utils/utils");
+class Database {
+    static connect() {
         return __awaiter(this, void 0, void 0, function* () {
+            const uri = Database.constructUri();
+            console.log("connecting to db...");
             try {
-                this.app.listen(this.port, () => console.log("server started: ", this.port));
+                yield mongoose_1.default.connect(uri);
+                console.log("db connected");
             }
             catch (error) {
-                throw error;
+                console.log("Failed to connect to db. retrying...");
+                yield (0, utils_1.sleep)(2000);
+                Database.connect();
             }
         });
     }
+    static constructUri() {
+        const host = process.env.MONGO_HOST || "localhost";
+        const port = process.env.MONGO_PORT || 5005;
+        const name = process.env.DB_NAME || "";
+        const protocol = "mongodb";
+        return protocol + "://" + host + ":" + port + "/" + name;
+    }
 }
-exports.default = Server;
+exports.default = Database;
